@@ -1,7 +1,7 @@
 {
   "name": "flamingo",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "homepage": "https://forbrig.github.io/flamingo",
   "dependencies": {
     "@react-three/drei": "^9.121.4",
