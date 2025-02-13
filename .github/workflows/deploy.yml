@@ -14,4 +14,5 @@ jobs:
       - id: build-publish
         uses: bitovi/github-actions-react-to-github-pages@v1.2.0
         with:
+          artifact_name: github-pages
           path: build
