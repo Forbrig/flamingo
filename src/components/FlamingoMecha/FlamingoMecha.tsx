@@ -10,7 +10,7 @@ import {
 } from "three";
 
 export const FlamingoMecha = (props: ThreeElements["mesh"]) => {
-  const gltf = useLoader(GLTFLoader, "/FlamingoMecha/FlamingoMecha.glb");
+  const gltf = useLoader(GLTFLoader, "./FlamingoMecha/FlamingoMecha.glb");
   const mixerRef = useRef<AnimationMixer>();
   const soundRef = useRef<PositionalAudio | null>(null);
   const [currentAction, setCurrentAction] = useState<AnimationAction | null>(
@@ -32,7 +32,7 @@ export const FlamingoMecha = (props: ThreeElements["mesh"]) => {
     const listener = new AudioListener();
     const sound = new PositionalAudio(listener);
     const audioLoader = new AudioLoader();
-    audioLoader.load("/FlamingoMecha/epicsaxguy.mp3", (buffer) => {
+    audioLoader.load("./FlamingoMecha/epicsaxguy.mp3", (buffer) => {
       sound.setBuffer(buffer);
       sound.setRefDistance(20);
       soundRef.current = sound;
