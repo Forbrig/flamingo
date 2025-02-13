@@ -26,6 +26,7 @@ export const HUD: FC<{
         <button onClick={() => setOrbitalControls((value) => !value)}>
           {orbitalControls.toString().toUpperCase()}
         </button>
+        {orbitalControls && <p>You can move the camera now</p>}
       </div>
     </Html>
   );
