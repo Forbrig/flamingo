@@ -1,19 +1,19 @@
 import { Html } from "@react-three/drei";
 import { FC } from "react";
 
+import { SpotLightColor } from "../../App";
+
 import styles from "./HUD.module.scss";
 
 export const HUD: FC<{
-  setSpotLightColor: React.Dispatch<
-    React.SetStateAction<"white" | "yellow" | "blue" | "green">
-  >;
+  setSpotLightColor: (spotLightColor: SpotLightColor) => void;
   orbitalControls: boolean;
   setOrbitalControls: React.Dispatch<React.SetStateAction<boolean>>;
   peerId: string | null;
   remotePeerId: string;
   setRemotePeerId: React.Dispatch<React.SetStateAction<string>>;
   connectedPeers: string[];
-  connectToPeer: () => void;
+  connectToPeer: (_remotePeerId: string) => void;
 }> = ({
   setSpotLightColor,
   orbitalControls,
@@ -45,7 +45,7 @@ export const HUD: FC<{
               value={remotePeerId}
               onChange={(e) => setRemotePeerId(e.target.value)}
             />
-            <button onClick={connectToPeer}>Connect</button>
+            <button onClick={() => connectToPeer(remotePeerId)}>Connect</button>
           </p>
 
           <h3>Connected Peers:</h3>

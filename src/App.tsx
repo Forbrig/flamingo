@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls as DreiOrbitControls } from "@react-three/drei";
-import Peer from "peerjs";
+import Peer, { DataConnection } from "peerjs";
 
 import { HUD } from "./components/HUD";
 import { Mecha } from "./components/Mecha";
@@ -9,23 +9,83 @@ import { Map } from "./components/Map";
 
 import "./App.css";
 
+export type SpotLightColor = "white" | "yellow" | "blue" | "green";
+
 export default function App() {
   const peerRef = useRef<Peer | null>(null);
 
-  const [spotLightColor, setSpotLightColor] = useState<
-    "white" | "yellow" | "blue" | "green"
-  >("white");
+  const [spotLightColor, setSpotLightColor] =
+    useState<SpotLightColor>("yellow");
   const [orbitalControls, setOrbitalControls] = useState(false);
   const [peerId, setPeerId] = useState<string | null>(null);
   const [remotePeerId, setRemotePeerId] = useState<string>("");
   const [connectedPeers, setConnectedPeers] = useState<string[]>([]);
+  const [connection, setConnection] = useState<DataConnection | null>(null);
 
-  const connectToPeer = () => {
-    if (peerRef.current && remotePeerId) {
-      console.log("Connecting to remote peer ID: " + remotePeerId);
+  useEffect(() => {
+    // Initialize PeerJS with the local PeerJS server
+    const peer = new Peer({
+      host: "192.168.0.100", // Replace with your local machine's IP address that is running the server
+      port: 9000, // Replace with the port that the server is running on
+      path: "/",
+      // debug: 3,
+      secure: false,
+    });
 
+    peerRef.current = peer;
+
+    peer.on("open", (id) => {
+      setPeerId(id);
+    });
+
+    peer.on("connection", (conn) => {
+      handleConnection(conn);
+    });
+
+    return () => {
+      peer.destroy();
+    };
+  }, []);
+
+  const handleConnection = (conn: DataConnection) => {
+    setConnection(conn);
+    setConnectedPeers((prevPeers) => [...prevPeers, conn.peer]);
+
+    conn.on("open", () => {
+      console.log("Connection opened with peer: " + conn.peer);
+    });
+
+    conn.on("data", (data) => {
+      const receivedData = data as { type: string; payload: any };
+
+      if (receivedData.type === "spotLightColor") {
+        setSpotLightColor(receivedData.payload);
+      }
+    });
+
+    conn.on("close", () => {
+      setConnectedPeers((prevPeers) =>
+        prevPeers.filter((peerId) => peerId !== conn.peer)
+      );
+    });
+  };
+
+  const connectToPeer = (remotePeerId: string) => {
+    if (peerRef.current) {
       const conn = peerRef.current.connect(remotePeerId);
-      setConnectedPeers((prevPeers) => [...prevPeers, remotePeerId]);
+
+      conn.on("open", () => {
+        setConnection(conn);
+        setConnectedPeers((prevPeers) => [...prevPeers, remotePeerId]);
+      });
+
+      conn.on("data", (data) => {
+        const receivedData = data as { type: string; payload: any };
+
+        if (receivedData.type === "spotLightColor") {
+          setSpotLightColor(receivedData.payload);
+        }
+      });
 
       conn.on("close", () => {
         setConnectedPeers((prevPeers) =>
@@ -35,35 +95,14 @@ export default function App() {
     }
   };
 
-  useEffect(() => {
-    // Initialize PeerJS with the local PeerJS server
-    const peer = new Peer({
-      host: "192.168.0.100",
-      port: 9000,
-      path: "/",
-    });
-
-    peerRef.current = peer;
-
-    peer.on("open", (id) => {
-      setPeerId(id);
-      console.log("My peer ID is: " + id);
-    });
-
-    peer.on("connection", (conn) => {
-      setConnectedPeers((prevPeers) => [...prevPeers, conn.peer]);
-
-      conn.on("close", () => {
-        setConnectedPeers((prevPeers) =>
-          prevPeers.filter((peerId) => peerId !== conn.peer)
-        );
-      });
-    });
-
-    return () => {
-      peer.destroy();
-    };
-  }, []);
+  const sendSpotLightColor = (spotLightColor: SpotLightColor) => {
+    if (connection && connection.open) {
+      console.log("Sending spotLightColor: ", spotLightColor);
+      connection.send({ type: "spotLightColor", payload: spotLightColor });
+    } else {
+      console.log("Connection is not open. Cannot send spotLightColor.");
+    }
+  };
 
   return (
     <Canvas shadows camera={{ position: [2, 2, 5] }}>
@@ -106,14 +145,17 @@ export default function App() {
       <Map />
 
       <HUD
-        setSpotLightColor={setSpotLightColor}
+        setSpotLightColor={(spotLightColor: SpotLightColor) => {
+          setSpotLightColor(spotLightColor);
+          sendSpotLightColor(spotLightColor);
+        }}
         orbitalControls={orbitalControls}
         setOrbitalControls={setOrbitalControls}
         peerId={peerId}
         remotePeerId={remotePeerId}
         connectedPeers={connectedPeers}
         setRemotePeerId={setRemotePeerId}
-        connectToPeer={connectToPeer}
+        connectToPeer={(_remotePeerId: string) => connectToPeer(_remotePeerId)}
       />
 
       {orbitalControls && <DreiOrbitControls />}
