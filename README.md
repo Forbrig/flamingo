@@ -13,22 +13,32 @@ Flamingo is a study case as a web application about browser capabilities for 3d 
 To set up the project locally:
 
 1. **Clone the repository**:
-   
-    ```bash
-    git clone https://github.com/Forbrig/flamingo.git
-    cd flamingo
-    ```
-      
-3. **Install dependencies**:
-   
-    ```bash
-    npm install
-    ```
+
+   ```bash
+   git clone https://github.com/Forbrig/flamingo.git
+   cd flamingo
+   ```
+
+2. **Install dependencies**:
+
+   ```bash
+   npm install
+   ```
 
 ## Usage
 
 To start the development server:
 
-    npm start
+```bash
+npm start
+```
 
-This will launch the application, and you can view it in your browser at http://localhost:3000.
+This will launch the application, and you can view it in your browser at <http://localhost:3000>.
+
+## Self host handshake server
+
+Install peerjs server in your machine and run:
+
+```bash
+peerjs --port 9000
+```

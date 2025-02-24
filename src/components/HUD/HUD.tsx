@@ -1,14 +1,12 @@
 import { Html } from "@react-three/drei";
-import { FC } from "react";
+import { FC, useState } from "react";
 
-import { SpotLightColor } from "../../App";
+import { SpotLightColor } from "../../hooks/usePeerConnection";
 
 import styles from "./HUD.module.scss";
 
 export const HUD: FC<{
   setSpotLightColor: (spotLightColor: SpotLightColor) => void;
-  orbitalControls: boolean;
-  setOrbitalControls: React.Dispatch<React.SetStateAction<boolean>>;
   peerId: string | null;
   remotePeerId: string;
   setRemotePeerId: React.Dispatch<React.SetStateAction<string>>;
@@ -16,18 +14,34 @@ export const HUD: FC<{
   connectToPeer: (_remotePeerId: string) => void;
 }> = ({
   setSpotLightColor,
-  orbitalControls,
-  setOrbitalControls,
   peerId,
   remotePeerId,
   setRemotePeerId,
   connectToPeer,
   connectedPeers,
 }) => {
+  const [isPlayerListOpen, setIsPlayerListOpen] = useState(false);
+  const [showCopiedMessage, setShowCopiedMessage] = useState(false);
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(
+      () => {
+        console.log("Copied to clipboard successfully!");
+        setShowCopiedMessage(true);
+        setTimeout(() => {
+          setShowCopiedMessage(false);
+        }, 2000);
+      },
+      (err) => {
+        console.error("Could not copy text: ", err);
+      }
+    );
+  };
+
   return (
-    <Html fullscreen position={[0, 0, 0]}>
-      <div className={styles.hud}>
-        <h1>threeJS-Fiber-peerJS</h1>
+    <Html fullscreen position={[0, 0, 0]} className={styles.hud}>
+      <div className={styles.controls}>
+        <h1>Welcome!</h1>
         <p>Hover over the flamingo for dance!</p>
         <p>Change the spot light color here:</p>
 
@@ -35,33 +49,57 @@ export const HUD: FC<{
         <button onClick={() => setSpotLightColor("yellow")}>yellow</button>
         <button onClick={() => setSpotLightColor("blue")}>blue</button>
         <button onClick={() => setSpotLightColor("green")}>green</button>
+      </div>
 
-        <div>
-          <p>My peer ID: {peerId}</p>
-          <p>
-            Remote peer ID:{" "}
-            <input
-              type="text"
-              value={remotePeerId}
-              onChange={(e) => setRemotePeerId(e.target.value)}
-            />
-            <button onClick={() => connectToPeer(remotePeerId)}>Connect</button>
-          </p>
-
-          <h3>Connected Peers:</h3>
-          <ul>
-            {connectedPeers.map((peerId, i) => (
-              <li key={i}>{peerId}</li>
-            ))}
-          </ul>
+      <div className={styles["player-list"]}>
+        <div className={styles.header}>
+          <button onClick={() => setIsPlayerListOpen((value) => !value)}>
+            {isPlayerListOpen ? "Hide" : "Show"} Player List
+          </button>
+          Peers connected: {connectedPeers.length}
         </div>
 
-        {/* <p>Orbital Controls:</p>
-        <button onClick={() => setOrbitalControls((value) => !value)}>
-          {orbitalControls.toString().toUpperCase()}
-        </button>
-        {orbitalControls && <p>You can move the camera now</p>} */}
+        {isPlayerListOpen && (
+          <div className={styles.content}>
+            <p>
+              My peer ID:{" "}
+              <span
+                style={{ cursor: "pointer", textDecoration: "underline" }}
+                onClick={() => peerId && copyToClipboard(peerId)}
+              >
+                {peerId}
+              </span>
+            </p>
+
+            <p>
+              Remote peer ID:{" "}
+              <input
+                type="text"
+                value={remotePeerId}
+                onChange={(e) => setRemotePeerId(e.target.value)}
+              />
+              <button onClick={() => connectToPeer(remotePeerId)}>
+                Connect
+              </button>
+            </p>
+
+            {connectedPeers.length > 0 && (
+              <div>
+                <p>Connected Peers:</p>
+                <ul>
+                  {connectedPeers.map((peer) => (
+                    <li key={peer}>{peer}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
       </div>
+
+      {showCopiedMessage && (
+        <div className={styles["copied-message"]}>Copied!</div>
+      )}
     </Html>
   );
 };
