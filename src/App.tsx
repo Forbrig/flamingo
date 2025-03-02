@@ -12,7 +12,7 @@ import "./App.css";
 export default function App() {
   const {
     connectToPeer,
-    connectedPeers,
+    connectedPeerIds,
     peerId,
     sendSpotLightColor,
     spotLightColor,
@@ -67,7 +67,7 @@ export default function App() {
         }}
         peerId={peerId}
         remotePeerId={remotePeerId}
-        connectedPeers={connectedPeers}
+        connectedPeers={connectedPeerIds}
         setRemotePeerId={setRemotePeerId}
         connectToPeer={(_remotePeerId: string) => connectToPeer(_remotePeerId)}
       />

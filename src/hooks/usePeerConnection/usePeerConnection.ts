@@ -5,13 +5,17 @@ export type SpotLightColor = "white" | "yellow" | "blue" | "green";
 
 export const usePeerConnection = () => {
   const peerRef = useRef<Peer | null>(null);
-
-  const [peerId, setPeerId] = useState<string | null>(null);
-  const [connectedPeers, setConnectedPeers] = useState<string[]>([]);
-  const [connection, setConnection] = useState<DataConnection | null>(null);
+  const peerConnectionsRef = useRef<Map<string, DataConnection>>(new Map());
+  const [peerId, setPeerId] = useState<string | undefined>(undefined);
+  const [connectedPeerIds, setConnectedPeerIds] = useState<string[]>([]);
 
   const [spotLightColor, setSpotLightColor] =
     useState<SpotLightColor>("yellow");
+
+  // Update connected peers state whenever connections change
+  const updateConnectedPeers = () => {
+    setConnectedPeerIds(Array.from(peerConnectionsRef.current?.keys() || []));
+  };
 
   useEffect(() => {
     // Initialize PeerJS with the local PeerJS server
@@ -38,16 +42,34 @@ export const usePeerConnection = () => {
     };
   }, []);
 
+  // someone connects to us
   const handleConnection = (conn: DataConnection) => {
-    setConnection(conn);
-    setConnectedPeers((prevPeers) => [...prevPeers, conn.peer]);
+    if (peerConnectionsRef.current?.has(conn.peer)) return;
 
     conn.on("open", () => {
-      console.log("Connection opened with peer: " + conn.peer);
+      peerConnectionsRef.current?.set(conn.peer, conn);
+      updateConnectedPeers(); // Update state when connection opens
+
+      // Send only the current peer list instead of broadcasting
+      conn.send({
+        type: "peersList",
+        payload: Array.from(peerConnectionsRef.current?.keys()),
+      });
     });
 
     conn.on("data", (data) => {
       const receivedData = data as { type: string; payload: any };
+
+      if (receivedData.type === "peersList") {
+        for (const receivedPeerId of receivedData.payload) {
+          if (
+            receivedPeerId !== peerRef.current?.id &&
+            !peerConnectionsRef.current?.has(receivedPeerId)
+          ) {
+            connectToPeer(receivedPeerId);
+          }
+        }
+      }
 
       if (receivedData.type === "spotLightColor") {
         setSpotLightColor(receivedData.payload);
@@ -55,41 +77,54 @@ export const usePeerConnection = () => {
     });
 
     conn.on("close", () => {
-      setConnectedPeers((prevPeers) =>
-        prevPeers.filter((peerId) => peerId !== conn.peer)
-      );
+      peerConnectionsRef.current?.delete(conn.peer);
+      updateConnectedPeers(); // Update state when connection closes
     });
   };
 
+  // we connect to someone
   const connectToPeer = (remotePeerId: string) => {
-    if (peerRef.current) {
-      const conn = peerRef.current.connect(remotePeerId);
+    if (!peerRef.current) return;
+    if (peerConnectionsRef.current?.has(remotePeerId)) return; // Prevent duplicate connections
 
-      conn.on("open", () => {
-        setConnection(conn);
-        setConnectedPeers((prevPeers) => [...prevPeers, remotePeerId]);
-      });
+    const conn = peerRef.current.connect(remotePeerId);
 
-      conn.on("data", (data) => {
-        const receivedData = data as { type: string; payload: any };
+    conn.on("open", () => {
+      peerConnectionsRef.current?.set(conn.peer, conn);
+      updateConnectedPeers(); // Update state when connection opens
+    });
 
-        if (receivedData.type === "spotLightColor") {
-          setSpotLightColor(receivedData.payload);
+    conn.on("data", (data) => {
+      const receivedData = data as { type: string; payload: any };
+
+      if (receivedData.type === "peersList") {
+        for (const receivedPeerId of receivedData.payload) {
+          if (
+            receivedPeerId !== peerRef.current?.id &&
+            receivedPeerId !== remotePeerId && // Ensure we don't double-connect
+            !peerConnectionsRef.current?.has(receivedPeerId)
+          ) {
+            connectToPeer(receivedPeerId);
+          }
         }
-      });
+      }
 
-      conn.on("close", () => {
-        setConnectedPeers((prevPeers) =>
-          prevPeers.filter((peerId) => peerId !== remotePeerId)
-        );
-      });
-    }
+      if (receivedData.type === "spotLightColor") {
+        setSpotLightColor(receivedData.payload);
+      }
+    });
+
+    conn.on("close", () => {
+      peerConnectionsRef.current?.delete(remotePeerId);
+      updateConnectedPeers(); // Update state when connection closes
+    });
   };
 
   const sendSpotLightColor = (spotLightColor: SpotLightColor) => {
-    if (connection && connection.open) {
-      console.log("Sending spotLightColor: ", spotLightColor);
-      connection.send({ type: "spotLightColor", payload: spotLightColor });
+    if (peerConnectionsRef.current?.size > 0) {
+      peerConnectionsRef.current?.forEach((connection) => {
+        connection.send({ type: "spotLightColor", payload: spotLightColor });
+      });
     } else {
       console.log("Connection is not open. Cannot send spotLightColor.");
     }
@@ -98,7 +133,7 @@ export const usePeerConnection = () => {
   return {
     peerId,
     connectToPeer,
-    connectedPeers,
+    connectedPeerIds,
     sendSpotLightColor,
     spotLightColor,
     setSpotLightColor,

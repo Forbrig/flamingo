@@ -7,7 +7,7 @@ import styles from "./HUD.module.scss";
 
 export const HUD: FC<{
   setSpotLightColor: (spotLightColor: SpotLightColor) => void;
-  peerId: string | null;
+  peerId: string | undefined;
   remotePeerId: string;
   setRemotePeerId: React.Dispatch<React.SetStateAction<string>>;
   connectedPeers: string[];
@@ -26,7 +26,6 @@ export const HUD: FC<{
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(
       () => {
-        console.log("Copied to clipboard successfully!");
         setShowCopiedMessage(true);
         setTimeout(() => {
           setShowCopiedMessage(false);
