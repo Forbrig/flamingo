@@ -42,3 +42,10 @@ Install peerjs server in your machine and run:
 ```bash
 peerjs --port 9000
 ```
+
+## VPN Warning
+
+When using a VPN, peer connections will fail because WebRTC requires direct network access.
+
+- Peers can initially discover each other but cannot establish connections
+- Solution: Disable your VPN when using this application
