@@ -3,7 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls as DreiOrbitControls } from "@react-three/drei";
 
 import { HUD } from "./components/HUD";
-import { FlamingoMecha } from "./components/FlamingoMecha";
+import { Mecha } from "./components/Mecha";
 import { Map } from "./components/Map";
 
 import "./App.css";
@@ -11,7 +11,7 @@ import "./App.css";
 export default function App() {
   const [spotLightColor, setSpotLightColor] = useState<
     "white" | "yellow" | "blue" | "green"
-  >("yellow");
+  >("white");
   const [orbitalControls, setOrbitalControls] = useState(false);
 
   return (
@@ -20,7 +20,7 @@ export default function App() {
       <spotLight
         castShadow
         color={spotLightColor}
-        position={[10, 10, 10]}
+        position={[10, 20, 20]}
         angle={0.15}
         penumbra={1}
         decay={0}
@@ -29,11 +29,28 @@ export default function App() {
         shadow-mapSize-height={1024}
       />
 
-      <FlamingoMecha
+      <Mecha
+        source="/FlamingoMecha/FlamingoMecha.glb"
         castShadow
         receiveShadow
         // scale={[0.1, 0.1, 0.1]} // Adjust scale as needed
         position={[0, -1.5, 0]} // Adjust position as needed
+      />
+
+      <Mecha
+        source="/FoxMecha/FoxMecha.glb"
+        castShadow
+        receiveShadow
+        // scale={[0.1, 0.1, 0.1]} // Adjust scale as needed
+        position={[-2.5, -1.5, -2.5]} // Adjust position as needed
+      />
+
+      <Mecha
+        source="/BeeMecha/BeeMecha.glb"
+        castShadow
+        receiveShadow
+        // scale={[0.1, 0.1, 0.1]} // Adjust scale as needed
+        position={[2.5, -1.5, -2.5]} // Adjust position as needed
       />
 
       <Map />

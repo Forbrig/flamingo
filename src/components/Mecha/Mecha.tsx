@@ -1,13 +1,17 @@
 import { ThreeElements, useLoader } from "@react-three/fiber";
 import { GLTFLoader } from "three-stdlib";
-import { useEffect, useRef } from "react";
+import { FC, useEffect, useRef } from "react";
 import { AudioListener, AudioLoader, PositionalAudio } from "three";
 import { useAnimations } from "@react-three/drei";
 
-export const FlamingoMecha = (props: ThreeElements["mesh"]) => {
+type MechaProps = ThreeElements["mesh"] & {
+  source: string;
+};
+
+export const Mecha: FC<MechaProps> = ({ source, ...props }) => {
   const { scene, animations } = useLoader(
     GLTFLoader,
-    `${process.env.PUBLIC_URL}/FlamingoMecha/FlamingoMecha.glb`
+    `${process.env.PUBLIC_URL}${source}`
   );
   const { actions } = useAnimations(animations, scene);
 
