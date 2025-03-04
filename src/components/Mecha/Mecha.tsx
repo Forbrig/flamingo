@@ -38,7 +38,7 @@ export const Mecha: FC<MechaProps> = ({ source, ...props }) => {
       child.castShadow = true;
       child.receiveShadow = true;
     });
-  }, [scene, animations]);
+  }, [scene, animations, actions]);
 
   const handlePointerOver = () => {
     if (actions["RobotArmature|Idle"]) actions["RobotArmature|Idle"].stop();
