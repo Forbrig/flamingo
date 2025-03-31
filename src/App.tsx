@@ -4,7 +4,7 @@ import { OrbitControls as DreiOrbitControls } from "@react-three/drei";
 
 import { HUD } from "./components/HUD";
 import { Mecha } from "./components/Mecha";
-import { Map } from "./components/Map";
+import { Scenario } from "./components/Scenario";
 
 import "./App.css";
 
@@ -53,7 +53,7 @@ export default function App() {
         position={[2.5, -1.5, -2.5]} // Adjust position as needed
       />
 
-      <Map />
+      <Scenario />
 
       <HUD
         setSpotLightColor={setSpotLightColor}

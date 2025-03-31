@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-export const Map: FC = () => {
+export const Scenario: FC = () => {
   return (
     <>
       {/* Floor */}
