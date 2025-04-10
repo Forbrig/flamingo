@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls as DreiOrbitControls } from "@react-three/drei";
+
+import { SpotLightColor, usePeerConnection } from "./hooks/usePeerConnection";
 
 import { HUD } from "./components/HUD";
 import { Mecha } from "./components/Mecha";
@@ -9,10 +10,15 @@ import { Scenario } from "./components/Scenario";
 import "./App.css";
 
 export default function App() {
-  const [spotLightColor, setSpotLightColor] = useState<
-    "white" | "yellow" | "blue" | "green"
-  >("white");
-  const [orbitalControls, setOrbitalControls] = useState(false);
+  const {
+    connectToPeer,
+    connectedPeerIds,
+    peerId,
+    sendSpotLightColor,
+    spotLightColor,
+    setSpotLightColor,
+  } = usePeerConnection();
+  const [remotePeerId, setRemotePeerId] = useState<string>("");
 
   return (
     <Canvas shadows camera={{ position: [2, 2, 5] }}>
@@ -33,7 +39,6 @@ export default function App() {
         source="/FlamingoMecha/FlamingoMecha.glb"
         castShadow
         receiveShadow
-        // scale={[0.1, 0.1, 0.1]} // Adjust scale as needed
         position={[0, -1.5, 0]} // Adjust position as needed
       />
 
@@ -56,12 +61,16 @@ export default function App() {
       <Scenario />
 
       <HUD
-        setSpotLightColor={setSpotLightColor}
-        orbitalControls={orbitalControls}
-        setOrbitalControls={setOrbitalControls}
+        setSpotLightColor={(spotLightColor: SpotLightColor) => {
+          setSpotLightColor(spotLightColor);
+          sendSpotLightColor(spotLightColor);
+        }}
+        peerId={peerId}
+        remotePeerId={remotePeerId}
+        connectedPeers={connectedPeerIds}
+        setRemotePeerId={setRemotePeerId}
+        connectToPeer={(_remotePeerId: string) => connectToPeer(_remotePeerId)}
       />
-
-      {orbitalControls && <DreiOrbitControls />}
     </Canvas>
   );
 }
