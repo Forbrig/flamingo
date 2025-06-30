@@ -24,33 +24,29 @@ export const CharacterCarousel: FC<CharacterCarouselProps> = ({
   const groupRef = useRef<Group>(null);
   const targetRotation = useRef(0);
   const currentRotation = useRef(0);
+  const previousIndex = useRef(0);
 
   useEffect(() => {
-    // Calculate the new target rotation
     const anglePerCharacter = (Math.PI * 2) / characters.length;
-    const newTargetRotation = -(selectedIndex * anglePerCharacter);
     
-    // Check if we're going from last to first or first to last
-    const currentIndex = Math.round(-targetRotation.current / anglePerCharacter) % characters.length;
-    const normalizedCurrentIndex = currentIndex < 0 ? currentIndex + characters.length : currentIndex;
-    
-    if (normalizedCurrentIndex === characters.length - 1 && selectedIndex === 0) {
-      // Going from last to first - continue rotating in the same direction
+    // Check if we're going from last to first (forward direction)
+    if (previousIndex.current === characters.length - 1 && selectedIndex === 0) {
+      // Continue rotating forward
       targetRotation.current -= anglePerCharacter;
-    } else if (normalizedCurrentIndex === 0 && selectedIndex === characters.length - 1) {
-      // Going from first to last - continue rotating in the same direction
-      targetRotation.current += anglePerCharacter;
     } else {
-      // Normal rotation
-      targetRotation.current = newTargetRotation;
+      // Calculate rotation difference
+      const indexDiff = selectedIndex - previousIndex.current;
+      targetRotation.current -= indexDiff * anglePerCharacter;
     }
+    
+    previousIndex.current = selectedIndex;
   }, [selectedIndex, characters.length]);
 
   useFrame((state, delta) => {
     if (groupRef.current) {
       // Smooth rotation interpolation
       const rotationDiff = targetRotation.current - currentRotation.current;
-      currentRotation.current += rotationDiff * delta * 3; // Smooth interpolation speed
+      currentRotation.current += rotationDiff * delta * 3;
       groupRef.current.rotation.y = currentRotation.current;
 
       // Add subtle floating animation
@@ -66,6 +62,7 @@ export const CharacterCarousel: FC<CharacterCarouselProps> = ({
         const angle = (index * Math.PI * 2) / characters.length;
         const x = Math.sin(angle) * radius;
         const z = Math.cos(angle) * radius;
+        const isSelected = index === selectedIndex;
         
         return (
           <group key={character.id} position={[x, 0, z]}>
@@ -73,7 +70,7 @@ export const CharacterCarousel: FC<CharacterCarouselProps> = ({
               source={character.source}
               castShadow
               receiveShadow
-              scale={[1, 1, 1]}
+              scale={isSelected ? [1.2, 1.2, 1.2] : [1, 1, 1]}
               rotation={[0, angle, 0]} // Face outward from circle center
               onClick={() => onSelect(index)}
             />
