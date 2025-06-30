@@ -3,8 +3,8 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls as DreiOrbitControls } from "@react-three/drei";
 
 import { HUD } from "./components/HUD";
-import { Mecha } from "./components/Mecha";
 import { Scenario } from "./components/Scenario";
+import { Character, CharacterCarousel } from "./components/CharacterCarousel";
 
 import "./App.css";
 
@@ -14,8 +14,18 @@ export default function App() {
   >("white");
   const [orbitalControls, setOrbitalControls] = useState(false);
 
+  const characters: Character[] = [
+    {
+      id: 1,
+      name: "Flamingo Mecha",
+      source: "/FlamingoMecha/FlamingoMecha.glb",
+    },
+    { id: 2, name: "Fox Mecha", source: "/FoxMecha/FoxMecha.glb" },
+    { id: 3, name: "Bee Mecha", source: "/BeeMecha/BeeMecha.glb" },
+  ];
+
   return (
-    <Canvas shadows camera={{ position: [2, 2, 5] }}>
+    <Canvas shadows camera={{ position: [0, 3, 8] }}>
       <ambientLight intensity={Math.PI / 2} />
       <spotLight
         castShadow
@@ -24,34 +34,12 @@ export default function App() {
         angle={0.15}
         penumbra={1}
         decay={0}
-        intensity={Math.PI}
+        intensity={Math.PI * 2}
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
       />
 
-      <Mecha
-        source="/FlamingoMecha/FlamingoMecha.glb"
-        castShadow
-        receiveShadow
-        // scale={[0.1, 0.1, 0.1]} // Adjust scale as needed
-        position={[0, -1.5, 0]} // Adjust position as needed
-      />
-
-      <Mecha
-        source="/FoxMecha/FoxMecha.glb"
-        castShadow
-        receiveShadow
-        // scale={[0.1, 0.1, 0.1]} // Adjust scale as needed
-        position={[-2.5, -1.5, -2.5]} // Adjust position as needed
-      />
-
-      <Mecha
-        source="/BeeMecha/BeeMecha.glb"
-        castShadow
-        receiveShadow
-        // scale={[0.1, 0.1, 0.1]} // Adjust scale as needed
-        position={[2.5, -1.5, -2.5]} // Adjust position as needed
-      />
+      <CharacterCarousel characters={characters} />
 
       <Scenario />
 
