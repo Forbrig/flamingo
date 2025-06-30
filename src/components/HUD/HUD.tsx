@@ -9,18 +9,30 @@ export const HUD: FC<{
   >;
   orbitalControls: boolean;
   setOrbitalControls: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ setSpotLightColor, orbitalControls, setOrbitalControls }) => {
+  setSelectedCharacter: React.Dispatch<React.SetStateAction<number>>;
+}> = ({
+  setSpotLightColor,
+  orbitalControls,
+  setOrbitalControls,
+  setSelectedCharacter,
+}) => {
   return (
     <Html fullscreen position={[0, 0, 0]}>
       <div className={styles.hud}>
-        <h1>bitovi-webxr</h1>
-        <p>Hover over the flamingo for dance!</p>
-        <p>Change the spot light color here:</p>
+        <div className={styles.title}>
+          <h1>flamingo-webxr</h1>
+        </div>
 
+        <p>Spot light color:</p>
         <button onClick={() => setSpotLightColor("white")}>white</button>
         <button onClick={() => setSpotLightColor("yellow")}>yellow</button>
         <button onClick={() => setSpotLightColor("blue")}>blue</button>
         <button onClick={() => setSpotLightColor("green")}>green</button>
+
+        <p>Characters:</p>
+        <button onClick={() => setSelectedCharacter(0)}>Flamingo Mecha</button>
+        <button onClick={() => setSelectedCharacter(1)}>Bee Mecha</button>
+        <button onClick={() => setSelectedCharacter(2)}>Fox Mecha</button>
 
         <p>Orbital Controls:</p>
         <button onClick={() => setOrbitalControls((value) => !value)}>

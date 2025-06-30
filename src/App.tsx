@@ -13,6 +13,7 @@ export default function App() {
     "white" | "yellow" | "blue" | "green"
   >("white");
   const [orbitalControls, setOrbitalControls] = useState(false);
+  const [selectedCharacter, setSelectedCharacter] = useState(0);
 
   const characters: Character[] = [
     {
@@ -39,7 +40,10 @@ export default function App() {
         shadow-mapSize-height={1024}
       />
 
-      <CharacterCarousel characters={characters} />
+      <CharacterCarousel
+        characters={characters}
+        selectedCharacter={selectedCharacter}
+      />
 
       <Scenario />
 
@@ -47,6 +51,7 @@ export default function App() {
         setSpotLightColor={setSpotLightColor}
         orbitalControls={orbitalControls}
         setOrbitalControls={setOrbitalControls}
+        setSelectedCharacter={setSelectedCharacter}
       />
 
       {orbitalControls && <DreiOrbitControls />}
