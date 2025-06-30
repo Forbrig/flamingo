@@ -6,19 +6,41 @@ import { useAnimations } from "@react-three/drei";
 
 type MechaProps = ThreeElements["mesh"] & {
   source: string;
+  randomAnimations: boolean;
 };
 
-export const Mecha: FC<MechaProps> = ({ source, ...props }) => {
+export const Mecha: FC<MechaProps> = ({
+  source,
+  randomAnimations,
+  ...props
+}) => {
   const { scene, animations } = useLoader(
     GLTFLoader,
     `${process.env.PUBLIC_URL}${source}`
   );
-  const { actions } = useAnimations(animations, scene);
+  const { actions, mixer } = useAnimations(animations, scene);
 
   const soundRef = useRef<PositionalAudio | null>(null);
 
   useEffect(() => {
-    if (actions["RobotArmature|Idle"]) actions["RobotArmature|Idle"].play();
+    let interval: NodeJS.Timeout | null = null;
+
+    // do a random animation from the animations array from time to time
+    if (randomAnimations && animations.length > 0) {
+      interval = setInterval(() => {
+        // stop all actions
+        mixer.stopAllAction();
+        const randomAnimation =
+          animations[Math.floor(Math.random() * animations.length)];
+        if (randomAnimation && actions[randomAnimation.name]) {
+          actions[randomAnimation.name]?.play();
+        }
+      }, 2000);
+    } else {
+      interval && clearInterval(interval);
+      mixer.stopAllAction();
+      if (actions["RobotArmature|Idle"]) actions["RobotArmature|Idle"].play();
+    }
 
     const listener = new AudioListener();
     const sound = new PositionalAudio(listener);
@@ -38,7 +60,16 @@ export const Mecha: FC<MechaProps> = ({ source, ...props }) => {
       child.castShadow = true;
       child.receiveShadow = true;
     });
-  }, [scene, animations, actions]);
+
+    return () => {
+      interval && clearInterval(interval);
+      mixer.stopAllAction();
+      if (soundRef.current) {
+        soundRef.current.stop();
+        scene.remove(soundRef.current);
+      }
+    };
+  }, [scene, animations, actions, mixer, randomAnimations]);
 
   const handlePointerOver = () => {
     if (actions["RobotArmature|Idle"]) actions["RobotArmature|Idle"].stop();

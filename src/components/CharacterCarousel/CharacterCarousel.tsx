@@ -1,4 +1,4 @@
-import { FC, useRef } from "react";
+import { FC, useEffect, useRef } from "react";
 import { Mecha } from "../Mecha";
 import { Group } from "three";
 import { useFrame } from "@react-three/fiber";
@@ -12,24 +12,47 @@ export interface Character {
 interface CharacterCarouselProps {
   characters: Character[];
   selectedCharacter: number;
+  randomAnimations: boolean;
 }
 
 export const CharacterCarousel: FC<CharacterCarouselProps> = ({
   characters,
   selectedCharacter,
+  randomAnimations,
 }) => {
-  const groupRef = useRef<Group>(null);
   const radius = 2;
+  const groupRef = useRef<Group>(null);
+  const targetRotation = useRef(0);
+  const currentRotation = useRef(0);
+  const previousIndex = useRef(0);
 
-  useFrame(() => {
+  useEffect(() => {
+    const anglePerCharacter = (Math.PI * 2) / characters.length;
+    const indexDiff = selectedCharacter - previousIndex.current;
+
+    if (
+      previousIndex.current === characters.length - 1 &&
+      selectedCharacter === 0
+    ) {
+      targetRotation.current -= anglePerCharacter;
+    } else if (
+      previousIndex.current === 0 &&
+      selectedCharacter === characters.length - 1
+    ) {
+      targetRotation.current += anglePerCharacter;
+    } else {
+      targetRotation.current -= indexDiff * anglePerCharacter;
+    }
+
+    previousIndex.current = selectedCharacter;
+  }, [selectedCharacter, characters.length]);
+
+  useFrame((_, delta) => {
     if (groupRef.current) {
-      // Rotate the group based on the selected character index
-      // This will make the carousel rotate around the center
-      // The rotation is calculated based on the selected character index
-      // and the total number of characters
-      const angle = (selectedCharacter * Math.PI * 2) / characters.length;
-      groupRef.current.rotation.y = angle;
-      // groupRef.current.rotation.y += 0.01; // Uncomment for continuous rotation
+      // Smooth rotation interpolation
+      const rotationDiff = targetRotation.current - currentRotation.current;
+      currentRotation.current += rotationDiff * delta * 3;
+      groupRef.current.rotation.y = currentRotation.current;
     }
   });
 
@@ -47,7 +70,8 @@ export const CharacterCarousel: FC<CharacterCarouselProps> = ({
             castShadow
             receiveShadow
             rotation={[0, angle, 0]} // Face outward from circle center
-            position={[x, 0, z]} // Adjust position as needed
+            position={[x, 0, z]}
+            randomAnimations={randomAnimations}
           />
         );
       })}
