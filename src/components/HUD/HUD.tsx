@@ -1,5 +1,5 @@
-import { Html } from "@react-three/drei";
 import { FC } from "react";
+import { createPortal } from "react-dom";
 
 import styles from "./HUD.module.scss";
 
@@ -41,80 +41,80 @@ export const HUD: FC<{
 
   const currentCharacter = characters[selectedCharacter];
 
-  return (
-    <Html fullscreen>
-      <div className={styles.hud}>
-        <div className={styles.header}>
-          <h1>Character Selection</h1>
-          <h2 
-            className={styles.characterName}
-            style={{ color: currentCharacter.color }}
+  // Use createPortal to render HUD outside of Canvas
+  return createPortal(
+    <div className={styles.hud}>
+      <div className={styles.header}>
+        <h1>Character Selection</h1>
+        <h2 
+          className={styles.characterName}
+          style={{ color: currentCharacter.color }}
+        >
+          {currentCharacter.name}
+        </h2>
+        <p className={styles.instruction}>
+          Click characters or use controls below
+        </p>
+      </div>
+
+      <div className={styles.mainContent}>
+        <div className={styles.navigation}>
+          <button 
+            className={styles.navButton}
+            onClick={handlePrevious}
           >
-            {currentCharacter.name}
-          </h2>
-          <p className={styles.instruction}>
-            Click characters or use controls below
-          </p>
+            ← Previous
+          </button>
+          
+          <div className={styles.indicators}>
+            {characters.map((character, index) => (
+              <button
+                key={character.id}
+                className={`${styles.indicator} ${
+                  index === selectedCharacter ? styles.active : ''
+                }`}
+                style={{
+                  backgroundColor: index === selectedCharacter 
+                    ? character.color 
+                    : 'rgba(255, 255, 255, 0.2)'
+                }}
+                onClick={() => setSelectedCharacter(index)}
+                title={character.name}
+              />
+            ))}
+          </div>
+          
+          <button 
+            className={styles.navButton}
+            onClick={handleNext}
+          >
+            Next →
+          </button>
         </div>
 
-        <div className={styles.mainContent}>
-          <div className={styles.navigation}>
-            <button 
-              className={styles.navButton}
-              onClick={handlePrevious}
-            >
-              ← Previous
-            </button>
-            
-            <div className={styles.indicators}>
-              {characters.map((character, index) => (
-                <button
-                  key={character.id}
-                  className={`${styles.indicator} ${
-                    index === selectedCharacter ? styles.active : ''
-                  }`}
-                  style={{
-                    backgroundColor: index === selectedCharacter 
-                      ? character.color 
-                      : 'rgba(255, 255, 255, 0.2)'
-                  }}
-                  onClick={() => setSelectedCharacter(index)}
-                  title={character.name}
-                />
-              ))}
+        <div className={styles.controls}>
+          <div className={styles.controlGroup}>
+            <p className={styles.label}>Lighting</p>
+            <div className={styles.buttonGroup}>
+              <button onClick={() => setSpotLightColor("white")}>White</button>
+              <button onClick={() => setSpotLightColor("yellow")}>Yellow</button>
+              <button onClick={() => setSpotLightColor("blue")}>Blue</button>
+              <button onClick={() => setSpotLightColor("green")}>Green</button>
             </div>
-            
-            <button 
-              className={styles.navButton}
-              onClick={handleNext}
-            >
-              Next →
-            </button>
           </div>
 
-          <div className={styles.controls}>
-            <div className={styles.controlGroup}>
-              <p className={styles.label}>Lighting</p>
-              <div className={styles.buttonGroup}>
-                <button onClick={() => setSpotLightColor("white")}>White</button>
-                <button onClick={() => setSpotLightColor("yellow")}>Yellow</button>
-                <button onClick={() => setSpotLightColor("blue")}>Blue</button>
-                <button onClick={() => setSpotLightColor("green")}>Green</button>
-              </div>
-            </div>
-
-            <div className={styles.controlGroup}>
-              <p className={styles.label}>Camera</p>
-              <button 
-                className={`${styles.toggleButton} ${orbitalControls ? styles.active : ''}`}
-                onClick={() => setOrbitalControls((value) => !value)}
-              >
-                {orbitalControls ? 'Disable' : 'Enable'} Orbit
-              </button>
-            </div>
+          <div className={styles.controlGroup}>
+            <p className={styles.label}>Camera</p>
+            <button 
+              className={`${styles.toggleButton} ${orbitalControls ? styles.active : ''}`}
+              onClick={() => setOrbitalControls((value) => !value)}
+            >
+              {orbitalControls ? 'Disable' : 'Enable'} Orbit
+            </button>
           </div>
         </div>
       </div>
-    </Html>
+    </div>,
+    document.body
   );
 };

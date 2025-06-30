@@ -67,7 +67,7 @@ export const CharacterCarousel: FC<CharacterCarouselProps> = ({
               castShadow
               receiveShadow
               scale={isSelected ? [1.2, 1.2, 1.2] : [1, 1, 1]}
-              rotation={[0, -angle, 0]} // Face the center
+              rotation={[0, Math.PI, 0]} // Always face forward (toward camera)
               onClick={() => onSelect(index)}
             />
             
