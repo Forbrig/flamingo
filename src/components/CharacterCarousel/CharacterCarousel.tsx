@@ -83,15 +83,7 @@ export const CharacterCarousel: FC<CharacterCarouselProps> = ({
               </mesh>
             )}
             
-            {/* Character platform */}
-            <mesh position={[0, -2.2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-              <cylinderGeometry args={[1, 1, 0.1, 16]} />
-              <meshStandardMaterial 
-                color={isSelected ? character.color : "#333333"}
-                metalness={0.8}
-                roughness={0.2}
-              />
-            </mesh>
+           
           </group>
         );
       })}
