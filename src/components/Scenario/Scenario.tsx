@@ -7,6 +7,7 @@ export const Scenario: FC = () => {
       <mesh
         receiveShadow
         position={[0, 0, 0]}
+        rotation={0, 0, 0]}
       >
         <planeGeometry args={[25, 25]} />
         <meshStandardMaterial 
@@ -39,6 +40,7 @@ export const Scenario: FC = () => {
           opacity={0.2}
         />
       </mesh>
+
     </>
   );
 };
