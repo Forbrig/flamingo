@@ -71,19 +71,7 @@ export const CharacterCarousel: FC<CharacterCarouselProps> = ({
               onClick={() => onSelect(index)}
             />
             
-            {/* Selection indicator */}
-            {isSelected && (
-              <mesh position={[0, -2.5, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                <ringGeometry args={[1.2, 1.5, 32]} />
-                <meshBasicMaterial 
-                  color={character.color} 
-                  transparent 
-                  opacity={0.6}
-                />
-              </mesh>
-            )}
-            
-           
+          
           </group>
         );
       })}
