@@ -11,7 +11,7 @@ export const Scenario: FC = () => {
       >
         <planeGeometry args={[20, 20]} />
         <meshStandardMaterial 
-          color="#0a0a0a" 
+          color="#16213e" 
           metalness={0.8}
           roughness={0.2}
         />
@@ -21,7 +21,7 @@ export const Scenario: FC = () => {
       <mesh receiveShadow position={[0, 2, -12]} rotation={[0, 0, 0]}>
         <planeGeometry args={[25, 10]} />
         <meshStandardMaterial 
-          color="#1a1a2e" 
+          color="#16213e" 
           transparent
           opacity={0.3}
         />
