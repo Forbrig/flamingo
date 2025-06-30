@@ -60,6 +60,10 @@ export const CharacterCarousel: FC<CharacterCarouselProps> = ({
         const z = Math.cos(angle) * radius;
         const isSelected = index === selectedIndex;
         
+        // Calculate rotation to always face the camera (center)
+        // Characters should face inward toward the center of the circle
+        const faceRotation = -angle;
+        
         return (
           <group key={character.id} position={[x, 0, z]}>
             <Mecha
@@ -67,7 +71,7 @@ export const CharacterCarousel: FC<CharacterCarouselProps> = ({
               castShadow
               receiveShadow
               scale={isSelected ? [1.2, 1.2, 1.2] : [1, 1, 1]}
-              rotation={[0, Math.PI, 0]} // Always face forward (toward camera)
+              rotation={[0, faceRotation, 0]} // Face toward center/camera
               onClick={() => onSelect(index)}
             />
           </group>
