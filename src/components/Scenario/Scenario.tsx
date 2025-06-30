@@ -46,23 +46,6 @@ export const Scenario: FC = () => {
         />
       </mesh>
 
-      {/* Atmospheric particles/fog effect using small floating elements */}
-      {Array.from({ length: 20 }).map((_, i) => (
-        <mesh
-          key={i}
-          position={[
-            (Math.random() - 0.5) * 15,
-            Math.random() * 8 + 1,
-            (Math.random() - 0.5) * 15
-          ]}
-        >
-          <sphereGeometry args={[0.02, 8, 8]} />
-          <meshBasicMaterial 
-            color="#4a90e2" 
-            transparent 
-            opacity={0.3}
-          />
-        </mesh>
       ))}
     </>
   );
