@@ -70,13 +70,9 @@ export const CharacterCarousel: FC<CharacterCarouselProps> = ({
               rotation={[0, Math.PI, 0]} // Always face forward (toward camera)
               onClick={() => onSelect(index)}
             />
-            
-          
           </group>
         );
       })}
-      
-    
     </group>
   );
 };
