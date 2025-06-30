@@ -45,7 +45,6 @@ export const Scenario: FC = () => {
           opacity={0.2}
         />
       </mesh>
-
    
     </>
   );
