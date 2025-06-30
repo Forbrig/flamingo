@@ -7,7 +7,6 @@ export const Scenario: FC = () => {
       <mesh
         receiveShadow
         position={[0, 0, 0]}
-        {/* rotation={[-Math.PI / 2, 0, 0]} */}
       >
         <planeGeometry args={[25, 25]} />
         <meshStandardMaterial 
