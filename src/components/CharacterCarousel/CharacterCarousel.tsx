@@ -58,7 +58,6 @@ export const CharacterCarousel: FC<CharacterCarouselProps> = ({
         const angle = (index * Math.PI * 2) / characters.length;
         const x = Math.sin(angle) * radius;
         const z = Math.cos(angle) * radius;
-        const isSelected = index === selectedIndex;
         
         return (
           <group key={character.id} position={[x, 0, z]}>
@@ -66,7 +65,7 @@ export const CharacterCarousel: FC<CharacterCarouselProps> = ({
               source={character.source}
               castShadow
               receiveShadow
-              scale={isSelected ? [1.2, 1.2, 1.2] : [1, 1, 1]}
+              scale={[1, 1, 1]}
               rotation={[0, angle, 0]} // Face outward from circle center
               onClick={() => onSelect(index)}
             />
