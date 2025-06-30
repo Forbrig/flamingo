@@ -26,23 +26,31 @@ export const CharacterCarousel: FC<CharacterCarouselProps> = ({
   const currentRotation = useRef(0);
 
   useEffect(() => {
-    targetRotation.current = -(selectedIndex * (Math.PI * 2)) / characters.length;
+    // Calculate the new target rotation
+    const anglePerCharacter = (Math.PI * 2) / characters.length;
+    const newTargetRotation = -(selectedIndex * anglePerCharacter);
+    
+    // Check if we're going from last to first or first to last
+    const currentIndex = Math.round(-targetRotation.current / anglePerCharacter) % characters.length;
+    const normalizedCurrentIndex = currentIndex < 0 ? currentIndex + characters.length : currentIndex;
+    
+    if (normalizedCurrentIndex === characters.length - 1 && selectedIndex === 0) {
+      // Going from last to first - continue rotating in the same direction
+      targetRotation.current -= anglePerCharacter;
+    } else if (normalizedCurrentIndex === 0 && selectedIndex === characters.length - 1) {
+      // Going from first to last - continue rotating in the same direction
+      targetRotation.current += anglePerCharacter;
+    } else {
+      // Normal rotation
+      targetRotation.current = newTargetRotation;
+    }
   }, [selectedIndex, characters.length]);
 
   useFrame((state, delta) => {
     if (groupRef.current) {
       // Smooth rotation interpolation
       const rotationDiff = targetRotation.current - currentRotation.current;
-      
-      // Handle wrapping around the circle
-      let adjustedDiff = rotationDiff;
-      if (Math.abs(rotationDiff) > Math.PI) {
-        adjustedDiff = rotationDiff > 0 
-          ? rotationDiff - Math.PI * 2 
-          : rotationDiff + Math.PI * 2;
-      }
-      
-      currentRotation.current += adjustedDiff * delta * 3; // Smooth interpolation speed
+      currentRotation.current += rotationDiff * delta * 3; // Smooth interpolation speed
       groupRef.current.rotation.y = currentRotation.current;
 
       // Add subtle floating animation
