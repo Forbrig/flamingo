@@ -96,15 +96,7 @@ export const CharacterCarousel: FC<CharacterCarouselProps> = ({
         );
       })}
       
-      {/* Center platform */}
-      <mesh position={[0, -2.3, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[4.5, 4.5, 0.2, 32]} />
-        <meshStandardMaterial 
-          color="#1a1a1a"
-          metalness={0.9}
-          roughness={0.1}
-        />
-      </mesh>
+    
     </group>
   );
 };
