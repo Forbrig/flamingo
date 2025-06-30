@@ -41,13 +41,13 @@ export const HUD: FC<{
             data-active={selectedCharacter === 1}
             onClick={() => setSelectedCharacter(1)}
           >
-            Bee Mecha
+            Fox Mecha
           </button>
           <button
             data-active={selectedCharacter === 2}
             onClick={() => setSelectedCharacter(2)}
           >
-            Fox Mecha
+            Bee Mecha
           </button>
         </div>
 
