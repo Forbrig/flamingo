@@ -6,9 +6,10 @@ import { useAnimations } from "@react-three/drei";
 
 type MechaProps = ThreeElements["mesh"] & {
   source: string;
+  onClick?: () => void;
 };
 
-export const Mecha: FC<MechaProps> = ({ source, ...props }) => {
+export const Mecha: FC<MechaProps> = ({ source, onClick, ...props }) => {
   const { scene, animations } = useLoader(
     GLTFLoader,
     `${process.env.PUBLIC_URL}${source}`
@@ -28,6 +29,7 @@ export const Mecha: FC<MechaProps> = ({ source, ...props }) => {
       (buffer) => {
         sound.setBuffer(buffer);
         sound.setRefDistance(20);
+        sound.setVolume(0.3);
         soundRef.current = sound;
         scene.add(sound);
       }
@@ -42,7 +44,6 @@ export const Mecha: FC<MechaProps> = ({ source, ...props }) => {
 
   const handlePointerOver = () => {
     if (actions["RobotArmature|Idle"]) actions["RobotArmature|Idle"].stop();
-
     if (actions["RobotArmature|Dance"]) actions["RobotArmature|Dance"].play();
 
     if (soundRef.current) {
@@ -59,6 +60,12 @@ export const Mecha: FC<MechaProps> = ({ source, ...props }) => {
     }
   };
 
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    }
+  };
+
   return (
     <>
       <primitive
@@ -66,6 +73,7 @@ export const Mecha: FC<MechaProps> = ({ source, ...props }) => {
         object={scene}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
+        onClick={handleClick}
       />
     </>
   );

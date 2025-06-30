@@ -1,61 +1,82 @@
-import { useState } from "react";
-import { Canvas } from "@react-three/fiber";
+import { useState, useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls as DreiOrbitControls } from "@react-three/drei";
+import * as THREE from "three";
 
 import { HUD } from "./components/HUD";
 import { Mecha } from "./components/Mecha";
 import { Scenario } from "./components/Scenario";
+import { CharacterCarousel } from "./components/CharacterCarousel";
 
 import "./App.css";
+
+const characters = [
+  {
+    id: 'flamingo',
+    name: 'Flamingo Mecha',
+    source: '/FlamingoMecha/FlamingoMecha.glb',
+    color: '#ff6b9d'
+  },
+  {
+    id: 'fox',
+    name: 'Fox Mecha',
+    source: '/FoxMecha/FoxMecha.glb',
+    color: '#ff8c42'
+  },
+  {
+    id: 'bee',
+    name: 'Bee Mecha',
+    source: '/BeeMecha/BeeMecha.glb',
+    color: '#ffd23f'
+  }
+];
 
 export default function App() {
   const [spotLightColor, setSpotLightColor] = useState<
     "white" | "yellow" | "blue" | "green"
   >("white");
   const [orbitalControls, setOrbitalControls] = useState(false);
+  const [selectedCharacter, setSelectedCharacter] = useState(0);
 
   return (
-    <Canvas shadows camera={{ position: [2, 2, 5] }}>
-      <ambientLight intensity={Math.PI / 2} />
+    <Canvas shadows camera={{ position: [0, 2, 8], fov: 50 }}>
+      <ambientLight intensity={Math.PI / 4} />
       <spotLight
         castShadow
         color={spotLightColor}
-        position={[10, 20, 20]}
-        angle={0.15}
+        position={[0, 15, 10]}
+        angle={0.3}
         penumbra={1}
         decay={0}
-        intensity={Math.PI}
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
+        intensity={Math.PI * 2}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+      />
+      
+      {/* Rim lighting */}
+      <directionalLight
+        position={[-10, 5, -10]}
+        intensity={0.5}
+        color="#4a90e2"
+      />
+      <directionalLight
+        position={[10, 5, -10]}
+        intensity={0.5}
+        color="#e24a90"
       />
 
-      <Mecha
-        source="/FlamingoMecha/FlamingoMecha.glb"
-        castShadow
-        receiveShadow
-        // scale={[0.1, 0.1, 0.1]} // Adjust scale as needed
-        position={[0, -1.5, 0]} // Adjust position as needed
-      />
-
-      <Mecha
-        source="/FoxMecha/FoxMecha.glb"
-        castShadow
-        receiveShadow
-        // scale={[0.1, 0.1, 0.1]} // Adjust scale as needed
-        position={[-2.5, -1.5, -2.5]} // Adjust position as needed
-      />
-
-      <Mecha
-        source="/BeeMecha/BeeMecha.glb"
-        castShadow
-        receiveShadow
-        // scale={[0.1, 0.1, 0.1]} // Adjust scale as needed
-        position={[2.5, -1.5, -2.5]} // Adjust position as needed
+      <CharacterCarousel 
+        characters={characters}
+        selectedIndex={selectedCharacter}
+        onSelect={setSelectedCharacter}
       />
 
       <Scenario />
 
       <HUD
+        characters={characters}
+        selectedCharacter={selectedCharacter}
+        setSelectedCharacter={setSelectedCharacter}
         setSpotLightColor={setSpotLightColor}
         orbitalControls={orbitalControls}
         setOrbitalControls={setOrbitalControls}

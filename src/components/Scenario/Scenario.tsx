@@ -3,39 +3,67 @@ import { FC } from "react";
 export const Scenario: FC = () => {
   return (
     <>
-      {/* Floor */}
+      {/* Main floor - larger and more dramatic */}
       <mesh
         receiveShadow
-        position={[0, -1.5, 0]}
+        position={[0, -2.5, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
       >
-        <planeGeometry args={[10, 10]} />
-        <meshStandardMaterial color="gray" />
+        <planeGeometry args={[20, 20]} />
+        <meshStandardMaterial 
+          color="#0a0a0a" 
+          metalness={0.8}
+          roughness={0.2}
+        />
       </mesh>
 
-      {/* Ceiling */}
-      <mesh receiveShadow position={[0, 3.5, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[10, 10]} />
-        <meshStandardMaterial color="gray" />
+      {/* Ambient environment - subtle walls for depth */}
+      <mesh receiveShadow position={[0, 2, -12]} rotation={[0, 0, 0]}>
+        <planeGeometry args={[25, 10]} />
+        <meshStandardMaterial 
+          color="#1a1a2e" 
+          transparent
+          opacity={0.3}
+        />
       </mesh>
 
-      {/* Back Wall */}
-      <mesh receiveShadow position={[0, 1, -5]}>
-        <planeGeometry args={[10, 5]} />
-        <meshStandardMaterial color="gray" />
+      {/* Side accent walls */}
+      <mesh receiveShadow position={[-12, 2, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <planeGeometry args={[25, 10]} />
+        <meshStandardMaterial 
+          color="#16213e" 
+          transparent
+          opacity={0.2}
+        />
       </mesh>
 
-      {/* Left Wall */}
-      <mesh receiveShadow position={[-5, 1, 0]} rotation={[0, Math.PI / 2, 0]}>
-        <planeGeometry args={[10, 5]} />
-        <meshStandardMaterial color="gray" />
+      <mesh receiveShadow position={[12, 2, 0]} rotation={[0, -Math.PI / 2, 0]}>
+        <planeGeometry args={[25, 10]} />
+        <meshStandardMaterial 
+          color="#16213e" 
+          transparent
+          opacity={0.2}
+        />
       </mesh>
 
-      {/* Right Wall */}
-      <mesh receiveShadow position={[5, 1, 0]} rotation={[0, -Math.PI / 2, 0]}>
-        <planeGeometry args={[10, 5]} />
-        <meshStandardMaterial color="gray" />
-      </mesh>
+      {/* Atmospheric particles/fog effect using small floating elements */}
+      {Array.from({ length: 20 }).map((_, i) => (
+        <mesh
+          key={i}
+          position={[
+            (Math.random() - 0.5) * 15,
+            Math.random() * 8 + 1,
+            (Math.random() - 0.5) * 15
+          ]}
+        >
+          <sphereGeometry args={[0.02, 8, 8]} />
+          <meshBasicMaterial 
+            color="#4a90e2" 
+            transparent 
+            opacity={0.3}
+          />
+        </mesh>
+      ))}
     </>
   );
 };
