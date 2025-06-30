@@ -6,7 +6,7 @@ export const Scenario: FC = () => {
       {/* Main floor - larger and more dramatic */}
       <mesh
         receiveShadow
-        position={[0, 0, 0]}
+        position={[0, -2, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
       >
         <planeGeometry args={[25, 25]} />
@@ -16,7 +16,7 @@ export const Scenario: FC = () => {
       </mesh>
 
       {/* Ambient environment - subtle walls for depth */}
-      <mesh receiveShadow position={[0, 0, -12]} rotation={[0, 0, 0]}>
+      <mesh receiveShadow position={[0, 2, -12]} rotation={[0, 0, 0]}>
         <planeGeometry args={[25, 10]} />
         <meshStandardMaterial 
           color="#16213e" 
@@ -25,7 +25,7 @@ export const Scenario: FC = () => {
       </mesh>
 
       {/* Side accent walls */}
-      <mesh receiveShadow position={[-12, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
+      <mesh receiveShadow position={[-12, 2, 0]} rotation={[0, Math.PI / 2, 0]}>
         <planeGeometry args={[25, 10]} />
         <meshStandardMaterial 
           color="#16213e" 
@@ -33,7 +33,7 @@ export const Scenario: FC = () => {
         />
       </mesh>
 
-      <mesh receiveShadow position={[12, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
+      <mesh receiveShadow position={[12, 2, 0]} rotation={[0, -Math.PI / 2, 0]}>
         <planeGeometry args={[25, 10]} />
         <meshStandardMaterial 
           color="#16213e" 
