@@ -28,14 +28,17 @@ export const CharacterCarousel: FC<CharacterCarouselProps> = ({
 
   useEffect(() => {
     const anglePerCharacter = (Math.PI * 2) / characters.length;
+    const indexDiff = selectedIndex - previousIndex.current;
     
-    // Check if we're going from last to first (forward direction)
+    // Handle wrapping cases for seamless rotation
     if (previousIndex.current === characters.length - 1 && selectedIndex === 0) {
-      // Continue rotating forward
+      // Going forward from last to first
       targetRotation.current -= anglePerCharacter;
+    } else if (previousIndex.current === 0 && selectedIndex === characters.length - 1) {
+      // Going backward from first to last
+      targetRotation.current += anglePerCharacter;
     } else {
-      // Calculate rotation difference
-      const indexDiff = selectedIndex - previousIndex.current;
+      // Normal case - rotate by the index difference
       targetRotation.current -= indexDiff * anglePerCharacter;
     }
     
