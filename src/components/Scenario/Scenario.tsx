@@ -22,7 +22,6 @@ export const Scenario: FC = () => {
         <planeGeometry args={[25, 10]} />
         <meshStandardMaterial 
           color="#16213e" 
-          transparent
           opacity={0.3}
         />
       </mesh>
@@ -32,7 +31,6 @@ export const Scenario: FC = () => {
         <planeGeometry args={[25, 10]} />
         <meshStandardMaterial 
           color="#16213e" 
-          transparent
           opacity={0.2}
         />
       </mesh>
@@ -41,7 +39,6 @@ export const Scenario: FC = () => {
         <planeGeometry args={[25, 10]} />
         <meshStandardMaterial 
           color="#16213e" 
-          transparent
           opacity={0.2}
         />
       </mesh>
