@@ -6,7 +6,7 @@ export const Scenario: FC = () => {
       {/* Main floor - larger and more dramatic */}
       <mesh
         receiveShadow
-        position={[0, 0, 0]}
+        position={[0, -2.5, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
       >
         <planeGeometry args={[25, 25]} />
