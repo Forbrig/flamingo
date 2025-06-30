@@ -12,8 +12,6 @@ export const Scenario: FC = () => {
         <planeGeometry args={[20, 20]} />
         <meshStandardMaterial 
           color="#16213e" 
-          metalness={0.8}
-          roughness={0.2}
         />
       </mesh>
 
